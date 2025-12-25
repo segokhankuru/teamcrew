@@ -21,6 +21,8 @@
             --sidebar-width: 300px;
             --ad-sidebar-width: 300px;
             --mobile-ad-height: 60px;
+            --pitch-texture: linear-gradient(0deg, rgba(255,255,255,0.06) 50%, rgba(255,255,255,0.02) 50%),
+                linear-gradient(90deg, rgba(255,255,255,0.03) 50%, rgba(255,255,255,0.01) 50%);
         }
 
         body {
@@ -101,6 +103,8 @@
             width: 100%;
             aspect-ratio: 2/3;
             background-color: var(--pitch-color);
+            background-image: var(--pitch-texture);
+            background-size: 42px 42px, 60px 60px;
             position: relative;
             border: 4px solid #fff;
             box-shadow: 0 0 30px rgba(0,0,0,0.6);
@@ -228,7 +232,7 @@
                 <div id="label-team-a" class="pitch-team-name">A Takımı</div>
                 <div id="label-team-b" class="pitch-team-name">B Takımı</div>
                 
-                <div id="gridOverlay" style="position:absolute; inset:0; pointer-events:none; opacity:0; background-image: linear-gradient(to right, rgba(255,255,255,0.2) 1px, transparent 1px), linear-gradient(to bottom, rgba(255,255,255,0.2) 1px, transparent 1px); background-size: 8.33% 5.55%;"></div>
+                <div id="gridOverlay" style="position:absolute; inset:0; pointer-events:none; opacity:0; background-image: linear-gradient(to right, rgba(255,255,255,0.2) 1px, transparent 1px), linear-gradient(to bottom, rgba(255,255,255,0.2) 1px, transparent 1px); background-size: 6.25% 4.1667%;"></div>
 
                 <div class="pitch-lines">
                     <div class="penalty-area-top"></div>
@@ -280,7 +284,7 @@
 
     <script>
         let players = JSON.parse(localStorage.getItem('players_v5')) || [];
-        const positions = ["GK", "DF", "OS", "FV"];
+        const positions = ["K", "STP", "BEK", "OS", "KN", "FV"];
         const pitchContainer = document.getElementById('pitch-container');
         const gridOverlay = document.getElementById('gridOverlay');
 
@@ -309,9 +313,19 @@
 
         function changePitchStyle(e) {
             const r = document.documentElement.style;
-            if(e.target.value === 'classic') { r.setProperty('--pitch-color', '#2e7d32'); r.setProperty('--pitch-line', 'rgba(255,255,255,0.6)'); }
-            else if(e.target.value === 'modern') { r.setProperty('--pitch-color', '#263238'); r.setProperty('--pitch-line', 'rgba(0,255,255,0.3)'); }
-            else { r.setProperty('--pitch-color', '#fff'); r.setProperty('--pitch-line', '#000'); }
+            if(e.target.value === 'classic') { 
+                r.setProperty('--pitch-color', '#2e7d32');
+                r.setProperty('--pitch-line', 'rgba(255,255,255,0.6)');
+                r.setProperty('--pitch-texture', 'linear-gradient(0deg, rgba(255,255,255,0.06) 50%, rgba(255,255,255,0.02) 50%), linear-gradient(90deg, rgba(255,255,255,0.03) 50%, rgba(255,255,255,0.01) 50%)');
+            } else if(e.target.value === 'modern') {
+                r.setProperty('--pitch-color', '#263238');
+                r.setProperty('--pitch-line', 'rgba(0,255,255,0.3)');
+                r.setProperty('--pitch-texture', 'linear-gradient(0deg, rgba(255,255,255,0.04) 50%, rgba(255,255,255,0.01) 50%), linear-gradient(90deg, rgba(255,255,255,0.03) 50%, rgba(255,255,255,0.01) 50%)');
+            } else {
+                r.setProperty('--pitch-color', '#fff');
+                r.setProperty('--pitch-line', '#000');
+                r.setProperty('--pitch-texture', 'none');
+            }
         }
 
         function handleEnter(e) { if(e.key === 'Enter') addPlayerToPool(); }
@@ -362,7 +376,7 @@
                 modifiers: [
                     interact.modifiers.restrictRect({ restriction: 'parent', endOnly: true }),
                     interact.modifiers.snap({
-                        targets: [ interact.createSnapGrid({ x: pitchContainer.clientWidth/12, y: pitchContainer.clientHeight/18 }) ],
+                        targets: [ interact.createSnapGrid({ x: pitchContainer.clientWidth/16, y: pitchContainer.clientHeight/24 }) ],
                         range: Infinity, relativePoints: [ { x: 0.5, y: 0.5 } ]
                     })
                 ],
