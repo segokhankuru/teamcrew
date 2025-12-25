@@ -22,7 +22,8 @@
             --team-b-contrast: #fff;
             --team-a-contrast-rgb: 255, 255, 255;
             --team-b-contrast-rgb: 255, 255, 255;
-            --token-size: 7%;
+            --token-size: 7;
+            --token-size-px: 42px;
             --sidebar-width: 300px;
             --ad-sidebar-width: 300px;
             --mobile-ad-height: 60px;
@@ -128,7 +129,7 @@
         #label-team-b { bottom: 20%; transform: translateY(50%); }
 
         .player-token { 
-            width: var(--token-size); aspect-ratio: 1; 
+            width: var(--token-size-px); height: var(--token-size-px);
             position: absolute; 
             display: flex; flex-direction: column; align-items: center; justify-content: center; 
             cursor: grab; z-index: 100; user-select: none;
@@ -295,7 +296,7 @@
         const pitchContainer = document.getElementById('pitch-container');
         const gridOverlay = document.getElementById('gridOverlay');
 
-        window.onload = () => { renderList(); setupInteract(); setupListeners(); updateStyles(); };
+        window.onload = () => { renderList(); setupInteract(); setupListeners(); updateStyles(); updateTokenSize(); };
 
         // Mobil Sidebar Toggle
         function toggleSidebar() {
@@ -307,6 +308,12 @@
                 document.getElementById(id).addEventListener('input', updateStyles);
             });
             document.getElementById('pitchStyle').addEventListener('change', changePitchStyle);
+        }
+
+        function updateTokenSize() {
+            const tokenPercent = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--token-size')) || 7;
+            const tokenSizePx = pitchContainer.clientWidth * (tokenPercent / 100);
+            document.documentElement.style.setProperty('--token-size-px', `${tokenSizePx}px`);
         }
 
         function getContrastColor(hex) {
@@ -342,6 +349,8 @@
             document.querySelectorAll('.team-a').forEach(el => el.classList.toggle('striped', document.getElementById('patternA').checked));
             document.querySelectorAll('.team-b').forEach(el => el.classList.toggle('striped', document.getElementById('patternB').checked));
         }
+
+        window.addEventListener('resize', updateTokenSize);
 
         function changePitchStyle(e) {
             const r = document.documentElement.style;
@@ -431,17 +440,7 @@
             const originalText = btn.innerHTML;
             btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Hazırlanıyor...';
 
-            const tokenSizePercent = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--token-size')) / 100;
-            const tokenSizePx = pitchContainer.clientWidth * tokenSizePercent;
-            const tokenElements = Array.from(document.querySelectorAll('.player-token'));
-            const previousTokenStyles = tokenElements.map(el => ({
-                width: el.style.width,
-                height: el.style.height
-            }));
-            tokenElements.forEach(el => {
-                el.style.width = `${tokenSizePx}px`;
-                el.style.height = `${tokenSizePx}px`;
-            });
+            updateTokenSize();
 
             html2canvas(pitchContainer, { scale: 3, backgroundColor:null }).then(canvas => {
                 const link = document.createElement('a');
