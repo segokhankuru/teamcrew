@@ -22,6 +22,7 @@
             --team-b-contrast: #fff;
             --team-a-contrast-rgb: 255, 255, 255;
             --team-b-contrast-rgb: 255, 255, 255;
+            --token-size: 7%;
             --sidebar-width: 300px;
             --ad-sidebar-width: 300px;
             --mobile-ad-height: 60px;
@@ -127,7 +128,7 @@
         #label-team-b { bottom: 20%; transform: translateY(50%); }
 
         .player-token { 
-            width: 12%; aspect-ratio: 1; 
+            width: var(--token-size); aspect-ratio: 1; 
             position: absolute; 
             display: flex; flex-direction: column; align-items: center; justify-content: center; 
             cursor: grab; z-index: 100; user-select: none;
@@ -429,13 +430,30 @@
             const btn = document.querySelector('.btn-download');
             const originalText = btn.innerHTML;
             btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Hazırlanıyor...';
-            
+
+            const tokenSizePercent = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--token-size')) / 100;
+            const tokenSizePx = pitchContainer.clientWidth * tokenSizePercent;
+            const tokenElements = Array.from(document.querySelectorAll('.player-token'));
+            const previousTokenStyles = tokenElements.map(el => ({
+                width: el.style.width,
+                height: el.style.height
+            }));
+            tokenElements.forEach(el => {
+                el.style.width = `${tokenSizePx}px`;
+                el.style.height = `${tokenSizePx}px`;
+            });
+
             html2canvas(pitchContainer, { scale: 3, backgroundColor:null }).then(canvas => {
                 const link = document.createElement('a');
                 link.download = `kadro_${Date.now()}.jpg`;
                 link.href = canvas.toDataURL('image/jpeg', 0.9);
                 link.click();
                 btn.innerHTML = originalText;
+            }).finally(() => {
+                tokenElements.forEach((el, index) => {
+                    el.style.width = previousTokenStyles[index].width;
+                    el.style.height = previousTokenStyles[index].height;
+                });
             });
         }
 
