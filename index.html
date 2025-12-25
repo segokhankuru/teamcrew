@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="description" content="Halı saha kadrosu oluşturma aracı.">
+    <meta name="author" content="Gökhan Kuru">
+    <title>Halı Saha Kadro Oluşturucu</title>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/interact.js/1.10.11/interact.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+
+    <style>
+        :root {
+            --pitch-color: #2e7d32;
+            --pitch-line: rgba(255, 255, 255, 0.6);
+            --grid-color: rgba(255, 255, 255, 0.2);
+            --team-a-color: #d32f2f;
+            --team-b-color: #1976d2;
+            --sidebar-width: 300px;
+            --ad-sidebar-width: 300px;
+            --mobile-ad-height: 60px;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0; padding: 0;
+            display: flex;
+            height: 100vh;
+            background-color: #f0f2f5;
+            overflow: hidden; 
+        }
+
+        /* --- SOL PANEL (AYARLAR) --- */
+        #sidebar {
+            width: var(--sidebar-width);
+            background: #fff;
+            padding: 15px;
+            box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+            z-index: 20;
+            flex-shrink: 0;
+            overflow-y: auto;
+            transition: max-height 0.3s ease;
+        }
+
+        /* Mobilde Ayarları Aç/Kapa Butonu */
+        #mobile-toggle-settings {
+            display: none;
+            width: 100%;
+            padding: 10px;
+            background: #444;
+            color: #fff;
+            text-align: center;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        h2 { margin: 0 0 15px 0; color: #333; font-size: 1.2rem; }
+        .control-group { margin-bottom: 15px; border-bottom: 1px solid #eee; padding-bottom: 10px; }
+        
+        input[type="text"], select { padding: 8px; border: 1px solid #ddd; border-radius: 4px; width: 100%; box-sizing: border-box; }
+        .team-inputs { display: flex; gap: 5px; align-items: center; margin-bottom: 5px; }
+        input[type="color"] { width: 35px; height: 35px; border: none; cursor: pointer; padding: 0; flex-shrink: 0;}
+        
+        button { cursor: pointer; border: none; border-radius: 4px; color: white; font-weight: bold; }
+        .btn-add { background: #333; padding: 8px; width: 20%; }
+        
+        #player-list { list-style: none; padding: 0; margin: 0; max-height: 40vh; overflow-y: auto; }
+        .pool-player { background: #f8f9fa; padding: 5px; margin-bottom: 4px; border: 1px solid #eee; display: flex; align-items: center; justify-content: space-between; gap: 5px; }
+        .pool-player-name { font-size: 0.85rem; flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-weight: 600; }
+        .pool-actions button { width: 24px; height: 24px; font-size: 0.7rem; padding: 0; margin-left: 2px; }
+
+        /* --- ORTA ALAN (Saha + Footer) --- */
+        #main-area {
+            flex: 1;
+            background: #333;
+            display: flex;
+            flex-direction: column; 
+            align-items: center;
+            justify-content: flex-start; /* Mobilde yukarı yasla */
+            overflow-y: auto; 
+            padding: 20px;
+            padding-bottom: 80px; 
+        }
+
+        #pitch-wrapper {
+            width: 100%;
+            /* Masaüstü için maksimum genişlik */
+            max-width: 600px; 
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            align-items: center;
+        }
+
+        #pitch-container {
+            /* MASAÜSTÜ VARSAYILAN */
+            width: 100%;
+            aspect-ratio: 2/3;
+            background-color: var(--pitch-color);
+            position: relative;
+            border: 4px solid #fff;
+            box-shadow: 0 0 30px rgba(0,0,0,0.6);
+            overflow: hidden;
+            touch-action: none; 
+        }
+
+        /* --- OYUNCU STİLLERİ --- */
+        .pitch-lines div { pointer-events: none; border-color: var(--pitch-line); border-style: solid; position: absolute; }
+        .center-circle { top: 50%; left: 50%; width: 20%; height: 13.3%; border-width: 2px; border-radius: 50%; transform: translate(-50%, -50%); }
+        .half-line { top: 50%; left: 0; right: 0; border-top-width: 2px; }
+        .penalty-area-top { top: 0; left: 20%; right: 20%; height: 16%; border-width: 2px; border-top: none; }
+        .penalty-area-bottom { bottom: 0; left: 20%; right: 20%; height: 16%; border-width: 2px; border-bottom: none; }
+        .pitch-team-name { position: absolute; left: 0; right: 0; text-align: center; font-size: 1.5rem; font-weight: bold; color: rgba(255,255,255,0.4); pointer-events: none; text-transform: uppercase; font-family: 'Impact', sans-serif; z-index: 1;}
+        #label-team-a { top: 20%; transform: translateY(-50%); }
+        #label-team-b { bottom: 20%; transform: translateY(50%); }
+
+        .player-token { 
+            width: 12%; aspect-ratio: 1; 
+            position: absolute; 
+            display: flex; flex-direction: column; align-items: center; justify-content: center; 
+            cursor: grab; z-index: 100; user-select: none;
+            touch-action: none !important; -webkit-user-select: none;
+        }
+        .jersey { width: 100%; height: 100%; border-radius: 50%; display: flex; justify-content: center; align-items: center; color: #fff; font-weight: bold; font-size: 1.2vw; box-shadow: 0 3px 5px rgba(0,0,0,0.4); border: 2px solid #fff; position: relative; }
+        .jersey::after { content: ''; position: absolute; inset: -3px; border-radius: 50%; border: 2px dashed rgba(255,255,255,0.3); }
+        .player-name-tag { background: rgba(0,0,0,0.8); color: #fff; padding: 2px 5px; border-radius: 3px; font-size: 0.7rem; margin-top: -5px; white-space: nowrap; z-index: 102; pointer-events: none;}
+        
+        .team-a .jersey { background-color: var(--team-a-color); }
+        .team-b .jersey { background-color: var(--team-b-color); }
+        .striped .jersey { background-image: repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(255,255,255,0.3) 10px, rgba(255,255,255,0.3) 15px); }
+
+        /* FOOTER */
+        .bottom-actions { background: #fff; padding: 15px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.2); text-align: center; width: 100%; box-sizing: border-box; }
+        .btn-download { background: #2e7d32; width: 100%; padding: 12px; font-size: 1rem; color: white; border-radius: 4px; display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 10px; }
+        .footer-info { font-size: 0.8rem; color: #666; line-height: 1.6; }
+        .footer-info a { color: #333; text-decoration: underline; cursor: pointer; margin: 0 5px; }
+
+        /* REKLAMLAR */
+        #ad-sidebar-desktop { width: var(--ad-sidebar-width); background: #f0f2f5; border-left: 1px solid #ddd; display: flex; align-items: center; justify-content: center; flex-shrink: 0; padding: 10px; }
+        .ad-placeholder { width: 100%; height: 100%; background: #e0e0e0; display: flex; align-items: center; justify-content: center; color: #888; border: 1px dashed #aaa; text-align: center; }
+        #ad-banner-mobile { display: none; position: fixed; bottom: 0; left: 0; right: 0; height: var(--mobile-ad-height); background: #fff; border-top: 1px solid #ddd; z-index: 999; align-items: center; justify-content: center; }
+
+        .modal { display: none; position: fixed; z-index: 10000; inset: 0; background-color: rgba(0,0,0,0.5); align-items: center; justify-content: center; }
+        .modal-content { background-color: #fefefe; padding: 20px; border-radius: 8px; width: 80%; max-width: 600px; position: relative; }
+        .close-modal { position: absolute; right: 15px; top: 10px; font-size: 24px; cursor: pointer; }
+
+        /* --- MOBİL ÖZEL AYARLAR (CRITICAL FIX) --- */
+        @media (max-width: 900px) {
+            body { flex-direction: column; height: auto; overflow: auto; }
+            
+            /* Mobilde Ayar Paneli Gizlenebilir Olsun */
+            #mobile-toggle-settings { display: block; }
+            #sidebar { 
+                width: 100%; 
+                max-height: 0; 
+                overflow: hidden; 
+                padding-top: 0; 
+                padding-bottom: 0;
+                border-bottom: 1px solid #ccc;
+            }
+            #sidebar.open { max-height: 60vh; padding: 15px; overflow-y: auto; }
+
+            #main-area { height: auto; padding: 10px; padding-bottom: 80px; overflow: visible; }
+            
+            /* MOBİL SAHA BOYUTLANDIRMASI - YÜKSEKLİĞE GÖRE */
+            #pitch-container {
+                width: auto; /* Genişlik serbest */
+                height: 70vh; /* Yükseklik ekranın %70'i */
+                max-width: 100%; /* Ekrandan taşmasın */
+                aspect-ratio: 2/3; /* Oranı Koru */
+                margin: 0 auto;
+            }
+            
+            #ad-sidebar-desktop { display: none; }
+            #ad-banner-mobile { display: flex; }
+            
+            .jersey { font-size: 12px; }
+            .player-token { width: 45px; height: 45px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="mobile-toggle-settings" onclick="toggleSidebar()">
+        <i class="fas fa-cog"></i> Takım Ayarlarını Göster/Gizle
+    </div>
+
+    <div id="sidebar">
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+            <h2><i class="fas fa-futbol"></i> Ayarlar</h2>
+            <button onclick="clearPitch()" style="background:#eee; color:#333; padding:5px; font-size:0.8rem;"><i class="fas fa-eraser"></i></button>
+        </div>
+
+        <div class="control-group">
+            <div class="team-inputs">
+                <input type="color" id="colorA" value="#d32f2f">
+                <input type="text" id="nameA" value="A Takımı">
+                <input type="checkbox" id="patternA" title="Çizgili">
+            </div>
+            <div class="team-inputs">
+                <input type="color" id="colorB" value="#1976d2">
+                <input type="text" id="nameB" value="B Takımı">
+                <input type="checkbox" id="patternB" title="Çizgili">
+            </div>
+            <select id="pitchStyle" style="margin-top:5px;">
+                <option value="classic">Klasik Saha</option>
+                <option value="modern">Modern Koyu</option>
+                <option value="white">Taktik Tahtası</option>
+            </select>
+        </div>
+
+        <div class="control-group" style="border:none;">
+            <div style="display:flex; gap:5px; margin-bottom:5px;">
+                <input type="text" id="newPlayerName" placeholder="Oyuncu Adı..." onkeypress="handleEnter(event)">
+                <button class="btn-add" onclick="addPlayerToPool()">Ekle</button>
+            </div>
+            <ul id="player-list"></ul>
+        </div>
+    </div>
+
+    <div id="main-area">
+        <div id="pitch-wrapper">
+            <div id="pitch-container">
+                <div id="label-team-a" class="pitch-team-name">A Takımı</div>
+                <div id="label-team-b" class="pitch-team-name">B Takımı</div>
+                
+                <div id="gridOverlay" style="position:absolute; inset:0; pointer-events:none; opacity:0; background-image: linear-gradient(to right, rgba(255,255,255,0.2) 1px, transparent 1px), linear-gradient(to bottom, rgba(255,255,255,0.2) 1px, transparent 1px); background-size: 8.33% 5.55%;"></div>
+
+                <div class="pitch-lines">
+                    <div class="penalty-area-top"></div>
+                    <div class="half-line"></div>
+                    <div class="center-circle"></div>
+                    <div class="penalty-area-bottom"></div>
+                </div>
+            </div>
+
+            <div class="bottom-actions">
+                <button class="btn-download" onclick="downloadPitch()">
+                    <i class="fas fa-camera"></i> Görüntüyü Kaydet (JPG)
+                </button>
+                
+                <div class="footer-info">
+                    <p>Created by <strong>Gökhan Kuru</strong></p>
+                    <p><a href="mailto:se.gokhankuru@gmail.com">se.gokhankuru@gmail.com</a></p>
+                    <div style="margin-top:5px;">
+                        <a onclick="openModal('privacyModal')">Gizlilik Politikası</a> | 
+                        <a onclick="openModal('termsModal')">Kullanım Şartları</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="ad-sidebar-desktop">
+        <div class="ad-placeholder">DESKTOP REKLAM (160x600)</div>
+    </div>
+
+    <div id="ad-banner-mobile">
+        <div style="font-size:0.8rem; color:#666;">MOBİL REKLAM (320x50)</div>
+    </div>
+
+    <div id="privacyModal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeModal('privacyModal')">&times;</span>
+            <h3>Gizlilik Politikası</h3>
+            <p>Verileriniz tarayıcı hafızasında saklanır. Sunucuya gönderilmez.</p>
+        </div>
+    </div>
+    <div id="termsModal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeModal('termsModal')">&times;</span>
+            <h3>Kullanım Şartları</h3>
+            <p>Uygulama ücretsizdir. Sorumluluk kullanıcıya aittir.</p>
+        </div>
+    </div>
+
+    <script>
+        let players = JSON.parse(localStorage.getItem('players_v5')) || [];
+        const positions = ["GK", "DF", "OS", "FV"];
+        const pitchContainer = document.getElementById('pitch-container');
+        const gridOverlay = document.getElementById('gridOverlay');
+
+        window.onload = () => { renderList(); setupInteract(); setupListeners(); updateLabels(); };
+
+        // Mobil Sidebar Toggle
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('open');
+        }
+
+        function setupListeners() {
+            ['colorA','colorB','patternA','patternB','nameA','nameB'].forEach(id => {
+                document.getElementById(id).addEventListener('input', updateStyles);
+            });
+            document.getElementById('pitchStyle').addEventListener('change', changePitchStyle);
+        }
+
+        function updateStyles() {
+            document.documentElement.style.setProperty('--team-a-color', document.getElementById('colorA').value);
+            document.documentElement.style.setProperty('--team-b-color', document.getElementById('colorB').value);
+            document.getElementById('label-team-a').innerText = document.getElementById('nameA').value;
+            document.getElementById('label-team-b').innerText = document.getElementById('nameB').value;
+            document.querySelectorAll('.team-a').forEach(el => el.classList.toggle('striped', document.getElementById('patternA').checked));
+            document.querySelectorAll('.team-b').forEach(el => el.classList.toggle('striped', document.getElementById('patternB').checked));
+        }
+
+        function changePitchStyle(e) {
+            const r = document.documentElement.style;
+            if(e.target.value === 'classic') { r.setProperty('--pitch-color', '#2e7d32'); r.setProperty('--pitch-line', 'rgba(255,255,255,0.6)'); }
+            else if(e.target.value === 'modern') { r.setProperty('--pitch-color', '#263238'); r.setProperty('--pitch-line', 'rgba(0,255,255,0.3)'); }
+            else { r.setProperty('--pitch-color', '#fff'); r.setProperty('--pitch-line', '#000'); }
+        }
+
+        function handleEnter(e) { if(e.key === 'Enter') addPlayerToPool(); }
+        function addPlayerToPool() {
+            const name = document.getElementById('newPlayerName').value.trim();
+            if(name && !players.includes(name)) {
+                players.push(name); localStorage.setItem('players_v5', JSON.stringify(players));
+                renderList(); document.getElementById('newPlayerName').value = '';
+            }
+        }
+        function renderList() {
+            const list = document.getElementById('player-list'); list.innerHTML = '';
+            players.forEach((p, i) => {
+                const li = document.createElement('li'); li.className = 'pool-player';
+                li.innerHTML = `<span class="pool-player-name">${p}</span>
+                    <div class="pool-actions" style="display:flex; align-items:center;">
+                        <select id="pos-${i}" style="width:45px; height:24px; padding:0; font-size:0.7rem;">${positions.map(pos=>`<option>${pos}</option>`).join('')}</select>
+                        <button style="background:var(--team-a-color)" onclick="spawn('${p}','team-a','pos-${i}')">A</button>
+                        <button style="background:var(--team-b-color)" onclick="spawn('${p}','team-b','pos-${i}')">B</button>
+                        <button style="background:#999" onclick="del('${p}')"><i class="fas fa-trash"></i></button>
+                    </div>`;
+                list.appendChild(li);
+            });
+        }
+        function del(name) { if(confirm('Silinsin mi?')) { players = players.filter(p=>p!==name); localStorage.setItem('players_v5', JSON.stringify(players)); renderList(); } }
+        function clearPitch() { if(confirm('Saha temizlensin mi?')) document.querySelectorAll('.player-token').forEach(e=>e.remove()); }
+
+        function spawn(name, team, selectId) {
+            const pos = document.getElementById(selectId).value;
+            const el = document.createElement('div');
+            el.className = `player-token ${team}`;
+            if((team==='team-a' && document.getElementById('patternA').checked) || (team==='team-b' && document.getElementById('patternB').checked)) el.classList.add('striped');
+            el.innerHTML = `<div class="jersey">${pos}</div><div class="player-name-tag">${name}</div>`;
+            
+            const w = pitchContainer.clientWidth; const h = pitchContainer.clientHeight;
+            // Mobilde sidebar kapalıyken spawn olunca saçmalamasın diye basit bir orta nokta hesabı
+            const x = w/2 - 20 + (Math.random()*40); 
+            const y = team==='team-a' ? h*0.2 : h*0.7;
+            el.style.transform = `translate(${x}px, ${y}px)`;
+            el.setAttribute('data-x', x); el.setAttribute('data-y', y);
+            el.ondblclick = function(){ this.remove() };
+            pitchContainer.appendChild(el);
+        }
+
+        function setupInteract() {
+            interact('.player-token').draggable({
+                inertia: true,
+                modifiers: [
+                    interact.modifiers.restrictRect({ restriction: 'parent', endOnly: true }),
+                    interact.modifiers.snap({
+                        targets: [ interact.createSnapGrid({ x: pitchContainer.clientWidth/12, y: pitchContainer.clientHeight/18 }) ],
+                        range: Infinity, relativePoints: [ { x: 0.5, y: 0.5 } ]
+                    })
+                ],
+                listeners: {
+                    start() { gridOverlay.style.opacity = 1; },
+                    move(event) {
+                        const target = event.target;
+                        const x = (parseFloat(target.getAttribute('data-x')) || 0) + event.dx;
+                        const y = (parseFloat(target.getAttribute('data-y')) || 0) + event.dy;
+                        target.style.transform = `translate(${x}px, ${y}px)`;
+                        target.setAttribute('data-x', x); target.setAttribute('data-y', y);
+                    },
+                    end() { gridOverlay.style.opacity = 0; }
+                }
+            });
+        }
+
+        function downloadPitch() {
+            const btn = document.querySelector('.btn-download');
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Hazırlanıyor...';
+            
+            html2canvas(pitchContainer, { scale: 3, backgroundColor:null }).then(canvas => {
+                const link = document.createElement('a');
+                link.download = `kadro_${Date.now()}.jpg`;
+                link.href = canvas.toDataURL('image/jpeg', 0.9);
+                link.click();
+                btn.innerHTML = originalText;
+            });
+        }
+
+        function openModal(id) { document.getElementById(id).style.display = 'flex'; }
+        function closeModal(id) { document.getElementById(id).style.display = 'none'; }
+        window.onclick = function(event) { if (event.target.classList.contains('modal')) event.target.style.display = "none"; }
+    </script>
+</body>
+</html>
