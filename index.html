@@ -199,10 +199,9 @@
             font-size: 0.75rem;
             box-shadow: 0 4px 6px rgba(0,0,0,0.45);
             border: 2px solid rgba(0,0,0,0.15);
-            border-radius: 8px 8px 12px 12px;
+            border-radius: 10px 10px 14px 14px;
             position: relative;
             background-color: #f5f5f5;
-            clip-path: polygon(15% 0%, 35% 0%, 40% 12%, 60% 12%, 65% 0%, 85% 0%, 100% 25%, 88% 40%, 88% 100%, 12% 100%, 12% 40%, 0% 25%);
         }
         .jersey::before {
             content: '';
@@ -215,6 +214,17 @@
             border-radius: 50%;
             background: rgba(255,255,255,0.9);
             box-shadow: inset 0 0 0 2px rgba(0,0,0,0.15);
+        }
+        .jersey::after {
+            content: '';
+            position: absolute;
+            top: 12%;
+            left: -22%;
+            width: 144%;
+            height: 40%;
+            border-radius: 10px;
+            background: inherit;
+            z-index: -1;
         }
         .player-name-tag {
             background: #0b6623;
@@ -239,10 +249,10 @@
             color: var(--team-b-contrast);
         }
         .team-a.striped .jersey {
-            background-image: repeating-linear-gradient(45deg, rgba(var(--team-a-stripe-rgb), 0.35), rgba(var(--team-a-stripe-rgb), 0.35) 8px, rgba(0,0,0,0.12) 8px, rgba(0,0,0,0.12) 14px);
+            background-image: repeating-linear-gradient(45deg, var(--team-a-color), var(--team-a-color) 8px, rgb(var(--team-a-stripe-rgb)) 8px, rgb(var(--team-a-stripe-rgb)) 14px);
         }
         .team-b.striped .jersey {
-            background-image: repeating-linear-gradient(45deg, rgba(var(--team-b-stripe-rgb), 0.35), rgba(var(--team-b-stripe-rgb), 0.35) 8px, rgba(0,0,0,0.12) 8px, rgba(0,0,0,0.12) 14px);
+            background-image: repeating-linear-gradient(45deg, var(--team-b-color), var(--team-b-color) 8px, rgb(var(--team-b-stripe-rgb)) 8px, rgb(var(--team-b-stripe-rgb)) 14px);
         }
 
         /* FOOTER */
