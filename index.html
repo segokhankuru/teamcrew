@@ -201,7 +201,7 @@
             border: 2px solid rgba(0,0,0,0.15);
             border-radius: 8px 8px 12px 12px;
             position: relative;
-            background: linear-gradient(180deg, rgba(255,255,255,0.95), rgba(230,230,230,0.95));
+            background-color: #f5f5f5;
             clip-path: polygon(15% 0%, 35% 0%, 40% 12%, 60% 12%, 65% 0%, 85% 0%, 100% 25%, 88% 40%, 88% 100%, 12% 100%, 12% 40%, 0% 25%);
         }
         .jersey::before {
@@ -231,15 +231,18 @@
         }
         
         .team-a .jersey {
-            background: linear-gradient(180deg, var(--team-a-color), rgba(255,255,255,0.35));
+            background-color: var(--team-a-color);
             color: var(--team-a-contrast);
         }
         .team-b .jersey {
-            background: linear-gradient(180deg, var(--team-b-color), rgba(255,255,255,0.35));
+            background-color: var(--team-b-color);
             color: var(--team-b-contrast);
         }
-        .striped .jersey {
-            background-image: repeating-linear-gradient(45deg, rgba(255,255,255,0.25), rgba(255,255,255,0.25) 8px, rgba(0,0,0,0.08) 8px, rgba(0,0,0,0.08) 14px);
+        .team-a.striped .jersey {
+            background-image: repeating-linear-gradient(45deg, rgba(var(--team-a-stripe-rgb), 0.35), rgba(var(--team-a-stripe-rgb), 0.35) 8px, rgba(0,0,0,0.12) 8px, rgba(0,0,0,0.12) 14px);
+        }
+        .team-b.striped .jersey {
+            background-image: repeating-linear-gradient(45deg, rgba(var(--team-b-stripe-rgb), 0.35), rgba(var(--team-b-stripe-rgb), 0.35) 8px, rgba(0,0,0,0.12) 8px, rgba(0,0,0,0.12) 14px);
         }
 
         /* FOOTER */
@@ -447,6 +450,8 @@
             document.documentElement.style.setProperty('--team-b-contrast', contrastB.hex);
             document.documentElement.style.setProperty('--team-a-contrast-rgb', contrastA.rgb.join(', '));
             document.documentElement.style.setProperty('--team-b-contrast-rgb', contrastB.rgb.join(', '));
+            document.documentElement.style.setProperty('--team-a-stripe-rgb', contrastA.rgb.join(', '));
+            document.documentElement.style.setProperty('--team-b-stripe-rgb', contrastB.rgb.join(', '));
             document.getElementById('label-team-a').innerText = document.getElementById('nameA').value;
             document.getElementById('label-team-b').innerText = document.getElementById('nameB').value;
             document.querySelectorAll('.team-a').forEach(el => el.classList.toggle('striped', document.getElementById('patternA').checked));
@@ -544,6 +549,8 @@
             btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Hazırlanıyor...';
 
             updateTokenSize();
+            const tokenElements = Array.from(document.querySelectorAll('.player-token'));
+            const previousTokenStyles = tokenElements.map(el => ({ width: el.style.width, height: el.style.height }));
 
             html2canvas(pitchContainer, { scale: 3, backgroundColor:null }).then(canvas => {
                 const link = document.createElement('a');
