@@ -3,13 +3,38 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta name="description" content="Halı saha kadrosu oluşturma aracı.">
+    <meta name="description" content="Kadrohazirla.com ile halı saha kadrosu oluşturun, oyuncuları sahaya yerleştirin ve kadroyu görsel olarak kaydedin.">
+    <meta name="keywords" content="halı saha kadro, kadro oluşturma, saha dizilişi, futbol taktik, kadro hazırla">
+    <meta name="robots" content="index,follow">
+    <link rel="canonical" href="https://kadrohazirla.com/">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="Kadrohazirla.com">
+    <meta property="og:title" content="Kadrohazirla.com | Halı Saha Kadro Oluşturucu">
+    <meta property="og:description" content="Halı saha kadronuzu hızlıca oluşturun, oyuncuları sahaya sürükleyin ve görseli kaydedin.">
+    <meta property="og:url" content="https://kadrohazirla.com/">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="Kadrohazirla.com | Halı Saha Kadro Oluşturucu">
+    <meta name="twitter:description" content="Halı saha kadronuzu hızlıca oluşturun, oyuncuları sahaya sürükleyin ve görseli kaydedin.">
     <meta name="author" content="Gökhan Kuru">
-    <title>Halı Saha Kadro Oluşturucu</title>
+    <title>Kadrohazirla.com | Halı Saha Kadro Oluşturucu</title>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/interact.js/1.10.11/interact.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script type="application/ld+json">
+        {
+            "@context": "https://schema.org",
+            "@type": "WebSite",
+            "name": "Kadrohazirla.com",
+            "url": "https://kadrohazirla.com/",
+            "inLanguage": "tr-TR",
+            "description": "Halı saha kadrosu oluşturma aracı.",
+            "publisher": {
+                "@type": "Organization",
+                "name": "Kadrohazirla.com"
+            }
+        }
+    </script>
 
     <style>
         :root {
@@ -52,6 +77,34 @@
             flex-shrink: 0;
             overflow-y: auto;
             transition: max-height 0.3s ease;
+        }
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .brand-mark {
+            width: 38px;
+            height: 38px;
+            border-radius: 10px;
+            background: radial-gradient(circle at 30% 30%, #fff 0%, #f1f1f1 45%, #cfcfcf 100%);
+            border: 2px solid #2e7d32;
+            position: relative;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            flex-shrink: 0;
+        }
+        .brand-mark::before {
+            content: '';
+            position: absolute;
+            inset: 7px;
+            border-radius: 8px;
+            border: 2px solid rgba(46,125,50,0.7);
+        }
+        .brand-name {
+            font-weight: 800;
+            color: #2e7d32;
+            letter-spacing: 0.4px;
+            font-size: 1rem;
         }
 
         /* Mobilde Ayarları Aç/Kapa Butonu */
@@ -196,7 +249,7 @@
         .footer-info a { color: #333; text-decoration: underline; cursor: pointer; margin: 0 5px; }
 
         /* REKLAMLAR */
-        #ad-sidebar-desktop { width: var(--ad-sidebar-width); background: #f0f2f5; border-left: 1px solid #ddd; display: flex; align-items: center; justify-content: center; flex-shrink: 0; padding: 10px; }
+        #ad-sidebar-desktop { width: var(--ad-sidebar-width); background: #f0f2f5; border-left: 1px solid #ddd; display: none; align-items: center; justify-content: center; flex-shrink: 0; padding: 10px; }
         .ad-placeholder { width: 100%; height: 100%; background: #e0e0e0; display: flex; align-items: center; justify-content: center; color: #888; border: 1px dashed #aaa; text-align: center; }
         #ad-banner-mobile { display: none; position: fixed; bottom: 0; left: 0; right: 0; height: var(--mobile-ad-height); background: #fff; border-top: 1px solid #ddd; z-index: 999; align-items: center; justify-content: center; }
 
@@ -232,7 +285,7 @@
             }
             
             #ad-sidebar-desktop { display: none; }
-            #ad-banner-mobile { display: flex; }
+            #ad-banner-mobile { display: none; }
             
             .jersey { font-size: 12px; }
             .player-token { width: 45px; height: 45px; }
@@ -247,7 +300,13 @@
 
     <div id="sidebar">
         <div style="display:flex; justify-content:space-between; align-items:center;">
-            <h2><i class="fas fa-futbol"></i> Ayarlar</h2>
+            <div class="brand">
+                <div class="brand-mark" aria-hidden="true"></div>
+                <div>
+                    <div class="brand-name">Kadrohazirla</div>
+                    <div style="font-size:0.75rem; color:#666;">Halı Saha Kadro</div>
+                </div>
+            </div>
             <button onclick="clearPitch()" style="background:#eee; color:#333; padding:5px; font-size:0.8rem;"><i class="fas fa-eraser"></i></button>
         </div>
 
