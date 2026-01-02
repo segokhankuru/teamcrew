@@ -17,7 +17,6 @@
     <meta name="twitter:description" content="Halı saha kadronuzu hızlıca oluşturun, oyuncuları sahaya sürükleyin ve görseli kaydedin.">
     <meta name="author" content="Gökhan Kuru">
     <title>Kadrohazirla.com | Halı Saha Kadro Oluşturucu</title>
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8249799356652453" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/interact.js/1.10.11/interact.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
@@ -282,9 +281,9 @@
         }
 
         /* REKLAMLAR */
-        #ad-sidebar-desktop { width: var(--ad-sidebar-width); background: #f0f2f5; border-left: 1px solid #ddd; display: none; align-items: center; justify-content: center; flex-shrink: 0; padding: 10px; }
-        .ad-placeholder { width: 100%; height: 100%; background: #e0e0e0; display: flex; align-items: center; justify-content: center; color: #888; border: 1px dashed #aaa; text-align: center; }
+        #ad-sidebar-desktop { width: var(--ad-sidebar-width); background: #f0f2f5; border-left: 1px solid #ddd; display: flex; align-items: center; justify-content: center; flex-shrink: 0; padding: 10px; }
         #ad-banner-mobile { display: none; position: fixed; bottom: 0; left: 0; right: 0; height: var(--mobile-ad-height); background: #fff; border-top: 1px solid #ddd; z-index: 999; align-items: center; justify-content: center; }
+        #adsterra-slot { width: 100%; display: flex; align-items: center; justify-content: center; }
 
         .modal { display: none; position: fixed; z-index: 10000; inset: 0; background-color: rgba(0,0,0,0.5); align-items: center; justify-content: center; }
         .modal-content { background-color: #fefefe; padding: 20px; border-radius: 8px; width: 80%; max-width: 600px; position: relative; }
@@ -318,7 +317,7 @@
             }
             
             #ad-sidebar-desktop { display: none; }
-            #ad-banner-mobile { display: none; }
+            #ad-banner-mobile { display: flex; }
             
             .jersey { font-size: 12px; }
             .player-token { width: 45px; height: 45px; }
@@ -422,11 +421,14 @@
     </div>
 
     <div id="ad-sidebar-desktop">
-        <div class="ad-placeholder">DESKTOP REKLAM (160x600)</div>
     </div>
 
     <div id="ad-banner-mobile">
-        <div style="font-size:0.8rem; color:#666;">MOBİL REKLAM (320x50)</div>
+    </div>
+
+    <div id="adsterra-slot">
+        <script async="async" data-cfasync="false" src="https://pl28386641.effectivegatecpm.com/bae3fb0f8d0456d3a275b7eb4fc6606d/invoke.js"></script>
+        <div id="container-bae3fb0f8d0456d3a275b7eb4fc6606d"></div>
     </div>
 
     <div id="privacyModal" class="modal">
@@ -451,7 +453,7 @@
         const pitchContainer = document.getElementById('pitch-container');
         const gridOverlay = document.getElementById('gridOverlay');
 
-        window.onload = () => { renderList(); setupInteract(); setupListeners(); updateStyles(); updateTokenSize(); };
+        window.onload = () => { renderList(); setupInteract(); setupListeners(); updateStyles(); updateTokenSize(); positionAd(); };
 
         // Mobil Sidebar Toggle
         function toggleSidebar() {
@@ -508,6 +510,21 @@
         }
 
         window.addEventListener('resize', updateTokenSize);
+        window.addEventListener('resize', positionAd);
+
+        function positionAd() {
+            const slot = document.getElementById('adsterra-slot');
+            const desktop = document.getElementById('ad-sidebar-desktop');
+            const mobile = document.getElementById('ad-banner-mobile');
+            if (!slot || !desktop || !mobile) return;
+            if (window.matchMedia('(max-width: 900px)').matches) {
+                if (mobile.contains(slot)) return;
+                mobile.appendChild(slot);
+            } else {
+                if (desktop.contains(slot)) return;
+                desktop.appendChild(slot);
+            }
+        }
 
         function changePitchStyle(e) {
             const r = document.documentElement.style;
