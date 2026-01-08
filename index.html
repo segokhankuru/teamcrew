@@ -149,11 +149,23 @@
         #pitch-wrapper {
             width: 100%;
             /* Masaüstü için maksimum genişlik */
-            max-width: 600px; 
+            max-width: 600px;
             display: flex;
             flex-direction: column;
             gap: 15px;
             align-items: center;
+        }
+
+        #pitch-stage {
+            width: 100%;
+            display: grid;
+            grid-template-columns: 36px 1fr;
+            align-items: stretch;
+            position: relative;
+        }
+
+        .pitch-labels {
+            position: relative;
         }
 
         #pitch-container {
@@ -167,7 +179,7 @@
             border: 4px solid #fff;
             box-shadow: 0 0 30px rgba(0,0,0,0.6);
             overflow: hidden;
-            touch-action: none; 
+            touch-action: none;
         }
 
         /* --- OYUNCU STİLLERİ --- */
@@ -176,9 +188,23 @@
         .half-line { top: 50%; left: 0; right: 0; border-top-width: 2px; }
         .penalty-area-top { top: 0; left: 20%; right: 20%; height: 16%; border-width: 2px; border-top: none; }
         .penalty-area-bottom { bottom: 0; left: 20%; right: 20%; height: 16%; border-width: 2px; border-bottom: none; }
-        .pitch-team-name { position: absolute; left: 0; right: 0; text-align: center; font-size: 1.5rem; font-weight: bold; color: rgba(255,255,255,0.4); pointer-events: none; text-transform: uppercase; font-family: 'Impact', sans-serif; z-index: 1;}
-        #label-team-a { top: 20%; transform: translateY(-50%); }
-        #label-team-b { bottom: 20%; transform: translateY(50%); }
+        .pitch-team-name {
+            position: absolute;
+            left: 50%;
+            text-align: center;
+            font-size: 1.4rem;
+            font-weight: bold;
+            color: rgba(255,255,255,0.45);
+            pointer-events: none;
+            text-transform: uppercase;
+            font-family: 'Impact', sans-serif;
+            writing-mode: vertical-rl;
+            text-orientation: mixed;
+            transform: translateX(-50%) rotate(180deg);
+            z-index: 1;
+        }
+        #label-team-a { top: 20%; transform: translate(-50%, -50%) rotate(180deg); }
+        #label-team-b { bottom: 20%; transform: translate(-50%, 50%) rotate(180deg); }
 
         .player-token { 
             width: var(--token-size-px); height: var(--token-size-px);
@@ -307,6 +333,10 @@
             #main-area { height: auto; padding: 10px; padding-bottom: 80px; overflow: visible; }
             
             /* MOBİL SAHA BOYUTLANDIRMASI - YÜKSEKLİĞE GÖRE */
+            #pitch-stage {
+                grid-template-columns: 30px 1fr;
+            }
+
             #pitch-container {
                 width: auto; /* Genişlik serbest */
                 height: 70vh; /* Yükseklik ekranın %70'i */
@@ -326,7 +356,7 @@
         <i class="fas fa-cog"></i> Takım Ayarlarını Göster/Gizle
     </div>
 
-    <div id="sidebar">
+    <div id="sidebar" class="open">
         <div style="display:flex; justify-content:space-between; align-items:center;">
             <div class="brand">
                 <div class="brand-mark" aria-hidden="true"></div>
@@ -367,17 +397,20 @@
 
     <div id="main-area">
         <div id="pitch-wrapper">
-            <div id="pitch-container">
-                <div id="label-team-a" class="pitch-team-name">A Takımı</div>
-                <div id="label-team-b" class="pitch-team-name">B Takımı</div>
-                
-                <div id="gridOverlay" style="position:absolute; inset:0; pointer-events:none; opacity:0; background-image: linear-gradient(to right, rgba(255,255,255,0.2) 1px, transparent 1px), linear-gradient(to bottom, rgba(255,255,255,0.2) 1px, transparent 1px); background-size: 6.25% 4.1667%;"></div>
+            <div id="pitch-stage">
+                <div class="pitch-labels">
+                    <div id="label-team-a" class="pitch-team-name">A Takımı</div>
+                    <div id="label-team-b" class="pitch-team-name">B Takımı</div>
+                </div>
+                <div id="pitch-container">
+                    <div id="gridOverlay" style="position:absolute; inset:0; pointer-events:none; opacity:0; background-image: linear-gradient(to right, rgba(255,255,255,0.2) 1px, transparent 1px), linear-gradient(to bottom, rgba(255,255,255,0.2) 1px, transparent 1px); background-size: 6.25% 4.1667%;"></div>
 
-                <div class="pitch-lines">
-                    <div class="penalty-area-top"></div>
-                    <div class="half-line"></div>
-                    <div class="center-circle"></div>
-                    <div class="penalty-area-bottom"></div>
+                    <div class="pitch-lines">
+                        <div class="penalty-area-top"></div>
+                        <div class="half-line"></div>
+                        <div class="center-circle"></div>
+                        <div class="penalty-area-bottom"></div>
+                    </div>
                 </div>
             </div>
 
@@ -432,6 +465,7 @@
         const positions = ["K", "STP", "BEK", "OS", "KN", "FV"];
         const pitchContainer = document.getElementById('pitch-container');
         const gridOverlay = document.getElementById('gridOverlay');
+        const pitchStage = document.getElementById('pitch-stage');
 
         window.onload = () => { renderList(); setupInteract(); setupListeners(); updateStyles(); updateTokenSize(); };
 
@@ -622,7 +656,7 @@
             const tokenElements = Array.from(document.querySelectorAll('.player-token'));
             const previousTokenStyles = tokenElements.map(el => ({ width: el.style.width, height: el.style.height }));
 
-            html2canvas(pitchContainer, { scale: 3, backgroundColor:null }).then(canvas => {
+            html2canvas(pitchStage, { scale: 3, backgroundColor:null }).then(canvas => {
                 const link = document.createElement('a');
                 link.download = `kadro_${Date.now()}.jpg`;
                 link.href = canvas.toDataURL('image/jpeg', 0.9);
