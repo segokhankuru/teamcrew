@@ -165,7 +165,12 @@
         }
 
         .pitch-labels {
-            position: relative;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            height: 100%;
         }
 
         #pitch-container {
@@ -189,8 +194,6 @@
         .penalty-area-top { top: 0; left: 20%; right: 20%; height: 16%; border-width: 2px; border-top: none; }
         .penalty-area-bottom { bottom: 0; left: 20%; right: 20%; height: 16%; border-width: 2px; border-bottom: none; }
         .pitch-team-name {
-            position: absolute;
-            left: 50%;
             text-align: center;
             font-size: 1.4rem;
             font-weight: bold;
@@ -200,11 +203,9 @@
             font-family: 'Impact', sans-serif;
             writing-mode: vertical-rl;
             text-orientation: mixed;
-            transform: translateX(-50%) rotate(180deg);
+            transform: rotate(180deg);
             z-index: 1;
         }
-        #label-team-a { top: 20%; transform: translate(-50%, -50%) rotate(180deg); }
-        #label-team-b { bottom: 20%; transform: translate(-50%, 50%) rotate(180deg); }
 
         .player-token { 
             width: var(--token-size-px); height: var(--token-size-px);
