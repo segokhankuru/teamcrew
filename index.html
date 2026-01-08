@@ -198,13 +198,11 @@
             pointer-events: none;
             text-transform: uppercase;
             font-family: 'Impact', sans-serif;
-            writing-mode: vertical-rl;
-            text-orientation: mixed;
-            transform: translateX(-50%) rotate(180deg);
+            transform: translate(-50%, -50%) rotate(-90deg);
             z-index: 1;
         }
-        #label-team-a { top: 20%; transform: translate(-50%, -50%) rotate(180deg); }
-        #label-team-b { bottom: 20%; transform: translate(-50%, 50%) rotate(180deg); }
+        #label-team-a { top: 20%; }
+        #label-team-b { bottom: 20%; transform: translate(-50%, 50%) rotate(-90deg); }
 
         .player-token { 
             width: var(--token-size-px); height: var(--token-size-px);
