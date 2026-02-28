@@ -4,31 +4,43 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" href="/favicon.ico" type="image/x-icon">
-    <meta name="description" content="Kadrohazirla.com ile halı saha kadrosu oluşturun, oyuncuları sahaya yerleştirin ve kadroyu görsel olarak kaydedin.">
-    <meta name="keywords" content="halı saha kadro, kadro oluşturma, saha dizilişi, futbol taktik, kadro hazırla">
-    <meta name="robots" content="index,follow">
+    <link rel="apple-touch-icon" href="/favicon.ico">
+    <meta name="theme-color" content="#2e7d32">
+    <meta name="description" content="Kadrohazirla.com ile ücretsiz halı saha kadrosu oluşturun, ilk 11 dizilişi yapın, oyuncuları sahaya yerleştirin, taktik tahtasını JPG olarak kaydedin ve arkadaşlarınızla kolayca paylaşın.">
+    <meta name="keywords" content="halı saha kadro, kadro oluşturma, saha dizilişi, futbol taktik, kadro hazırla, ilk 11 kur, halı saha taktik tahtası, futbol kadro kurma aracı, takım kur, maç kadrosu">
+    <meta name="robots" content="index, follow">
     <link rel="canonical" href="https://kadrohazirla.com/">
     <meta property="og:type" content="website">
     <meta property="og:site_name" content="Kadrohazirla.com">
-    <meta property="og:title" content="Kadrohazirla.com | Halı Saha Kadro Oluşturucu">
-    <meta property="og:description" content="Halı saha kadronuzu hızlıca oluşturun, oyuncuları sahaya sürükleyin ve görseli kaydedin.">
+    <meta property="og:title" content="Kadrohazirla.com | Halı Saha Kadro Oluşturucu ve İlk 11 Diziliş">
+    <meta property="og:description" content="Halı saha kadronuzu hızlıca oluşturun, oyuncuları sahaya sürükleyin, dizilişi ayarlayın ve görseli kaydedin.">
     <meta property="og:url" content="https://kadrohazirla.com/">
-    <meta name="twitter:card" content="summary">
-    <meta name="twitter:title" content="Kadrohazirla.com | Halı Saha Kadro Oluşturucu">
-    <meta name="twitter:description" content="Halı saha kadronuzu hızlıca oluşturun, oyuncuları sahaya sürükleyin ve görseli kaydedin.">
+    <meta property="og:image" content="https://kadrohazirla.com/og-image.jpg">
+    <meta property="og:image:alt" content="Kadrohazirla.com Halı Saha Kadro Oluşturucu Ekran Görüntüsü">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Kadrohazirla.com | Halı Saha Kadro Oluşturucu ve İlk 11 Diziliş">
+    <meta name="twitter:description" content="Halı saha kadronuzu hızlıca oluşturun, oyuncuları sahaya sürükleyin, dizilişi ayarlayın ve görseli kaydedin.">
+    <meta name="twitter:image" content="https://kadrohazirla.com/og-image.jpg">
     <meta name="author" content="Gökhan Kuru">
-    <title>Kadrohazirla.com | Halı Saha Kadro Oluşturucu</title>
+    <title>Kadrohazirla.com | Halı Saha Kadro Oluşturucu, İlk 11 Diziliş</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/interact.js/1.10.11/interact.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <script type="application/ld+json">
         {
             "@context": "https://schema.org",
-            "@type": "WebSite",
+            "@type": "WebApplication",
             "name": "Kadrohazirla.com",
             "url": "https://kadrohazirla.com/",
+            "applicationCategory": "SportsApplication",
+            "operatingSystem": "All",
             "inLanguage": "tr-TR",
-            "description": "Halı saha kadrosu oluşturma aracı.",
+            "description": "Kadrohazirla.com ile halı saha maçlarınız için kadro listesi oluşturun, oyuncuları taktik dizilişle sahaya yerleştirin ve görsel olarak kaydedin.",
+            "offers": {
+                "@type": "Offer",
+                "price": "0",
+                "priceCurrency": "TRY"
+            },
             "publisher": {
                 "@type": "Organization",
                 "name": "Kadrohazirla.com"
@@ -356,16 +368,16 @@
         <i class="fas fa-cog"></i> Takım Ayarlarını Göster/Gizle
     </div>
 
-    <div id="sidebar" class="open">
+    <header id="sidebar" class="open">
         <div style="display:flex; justify-content:space-between; align-items:center;">
             <div class="brand">
                 <div class="brand-mark" aria-hidden="true"></div>
                 <div>
-                    <h1 class="brand-name" style="margin:0;">Kadrohazirla</h1>
-                    <div style="font-size:0.75rem; color:#666;">Halı Saha Kadro</div>
+                    <h1 class="brand-name" style="margin:0;">Kadrohazirla.com</h1>
+                    <h2 style="font-size:0.75rem; color:#666; margin:0; font-weight:normal;">Halı Saha Kadro Oluşturucu</h2>
                 </div>
             </div>
-            <button onclick="clearPitch()" style="background:#eee; color:#333; padding:5px; font-size:0.8rem;"><i class="fas fa-eraser"></i></button>
+            <button onclick="clearPitch()" style="background:#eee; color:#333; padding:5px; font-size:0.8rem;" aria-label="Sahayı Temizle"><i class="fas fa-eraser"></i></button>
         </div>
 
         <div class="control-group">
@@ -388,14 +400,14 @@
 
         <div class="control-group" style="border:none;">
             <div style="display:flex; gap:5px; margin-bottom:5px;">
-                <input type="text" id="newPlayerName" placeholder="Oyuncu Adı..." onkeypress="handleEnter(event)">
+                <input type="text" id="newPlayerName" placeholder="Oyuncu Adı..." onkeypress="handleEnter(event)" aria-label="Oyuncu Adı">
                 <button class="btn-add" onclick="addPlayerToPool()">Ekle</button>
             </div>
             <ul id="player-list"></ul>
         </div>
-    </div>
+    </header>
 
-    <div id="main-area">
+    <main id="main-area">
         <div id="pitch-wrapper">
             <div id="pitch-stage">
                 <div class="pitch-labels">
@@ -430,9 +442,9 @@
             </div>
 
             <div class="content-section">
-                <h2>Halı Saha Kadro Hazırlama Rehberi</h2>
-                <p>Tahtanın altındaki detaylı bilgilendirmeler ayrı sayfaya taşındı.</p>
-                <p><a href="info.html">Detaylı halı saha kadro hazırlama rehberi ve kullanım bilgileri</a>.</p>
+                <h2>Halı Saha Kadro Hazırlama Rehberi ve Taktik Diziliş</h2>
+                <p>Kadrohazirla.com ile takımınızın ilk 11'ini veya halı saha kadrosunu kolayca kurun. Tahtanın altındaki detaylı bilgilendirmeler ayrı sayfaya taşındı.</p>
+                <p><a href="info.html" title="Halı saha kadro hazırlama rehberi">Detaylı halı saha kadro hazırlama rehberi ve kullanım bilgileri için tıklayın</a>.</p>
             </div>
 
             <div class="ad-bottom">
@@ -442,7 +454,7 @@
                 </div>
             </div>
         </div>
-    </div>
+    </main>
 
     <div id="privacyModal" class="modal">
         <div class="modal-content">
